@@ -44,15 +44,15 @@ class SpSpider(scrapy.Spider):
 			url = f'https://www.olx.ua/uk/ajax/misc/contact/phone/{uid}/?pt={token}'
 			yield scrapy.Request(url=url, callback=self.get_phone_numbers, cb_kwargs=dict(item_obj=item))
 
-		item['title'] = response.xpath('//div[@class="offer-titlebox"]/h1/text()').get()
+		item['title'] = response.xpath('//div[@class="offer-titlebox"]/h1/text()').get().strip()
 
-		item['price'] = response.xpath('//div[@class="offer-titlebox"]/strong/text()').get()
+		item['price'] = response.xpath('//strong[@class="pricelabel__value arranged"]/text()').get()
 
 		item['description'] = response.xpath('//div[@class="clr lheight20 large"]/text()').get()
         
 		photo_urls = []
 		for i in response.xpath('//ul[@id="descGallery"]/li'):
-			url = i.xpath('./li/a/@href').get()
+			url = i.xpath('./a/@href').get()
 			photo_urls.append(url)
 
 		item['photo_urls'] = photo_urls
@@ -62,6 +62,8 @@ class SpSpider(scrapy.Spider):
 		item['user_url'] = response.xpath('//div[@class="offer-user__actions"]/h4/a/@href').get()
 
 		item['address'] = response.xpath('//div[@class="offer-user__address"]/address/p/text()').get()
+	
+		yield item
 	
 	def get_phone_numbers(self, response, item_obj):
 		phone_data = eval(response.text)['value']
@@ -75,3 +77,5 @@ class SpSpider(scrapy.Spider):
 		else:
 			if phone_data != '000 000 000':
 				item_obj['phone_number'] = phone_data
+
+		yield item_obj

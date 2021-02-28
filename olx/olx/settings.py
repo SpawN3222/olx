@@ -12,9 +12,37 @@ BOT_NAME = 'olx'
 SPIDER_MODULES = ['olx.spiders']
 NEWSPIDER_MODULE = 'olx.spiders'
 
-
 LOG_STDOUT = True
 LOG_LEVEL = 'INFO'
+
+FEED_EXPORT_FIELDS = ['user_name', 'user_url', 'phone_number', 'title', 'description', 'photo_urls', 'price', 'address']
+FEED_FORMAT="json" # формат файла для вывода данных(json, csv, xml)
+FEED_URI="data.json" # путь для сохранения файла 
+
+######################################### Proxy ###############################################
+# Retry many times since proxies often fail
+RETRY_TIMES = 5
+# Retry on most error codes since proxies fail for different reasons
+RETRY_HTTP_CODES = [500, 503, 504, 400, 403, 404, 408]
+
+# Proxy list containing entries like
+# http://host1:port
+# http://username:password@host2:port
+# http://host3:port
+# ...
+PROXY_LIST = 'proxy.txt'
+PROXY_MODE = 0
+
+# Crawl responsibly by identifying yourself (and your website) on the user-agent
+#USER_AGENT = 'cataloxy (+http://www.yourdomain.com)'
+
+# Obey robots.txt rules
+#ROBOTSTXT_OBEY = True
+
+# Configure maximum concurrent requests performed by Scrapy (default: 16)
+CONCURRENT_REQUESTS = 5000
+CONCURRENT_REQUESTS_PER_IP = 10
+##############################################################################################
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'olx (+http://www.yourdomain.com)'
