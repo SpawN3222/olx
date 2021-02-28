@@ -19,4 +19,5 @@ class OlxItem(scrapy.Item):
     photo_urls = scrapy.Field()
     price = scrapy.Field()
     address = scrapy.Field()
+    date_time = scrapy.Field()
 
