@@ -42,7 +42,7 @@ class SpSpider(scrapy.Spider):
 			item['phone_number'] = None
 		else:
 			url = f'https://www.olx.ua/uk/ajax/misc/contact/phone/{uid}/?pt={token}'
-			yield scrapy.Request(url=url, callback=self.get_phone_numbers)
+			yield scrapy.Request(url=url, callback=self.get_phone_numbers, cb_kwargs=dict(item_obj=item))
 
 		item['title'] = response.xpath('//div[@class="offer-titlebox"]/h1/text()').get()
 
@@ -63,7 +63,7 @@ class SpSpider(scrapy.Spider):
 
 		item['address'] = response.xpath('//div[@class="offer-user__address"]/address/p/text()').get()
 	
-	def get_phone_numbers(self, response):
+	def get_phone_numbers(self, response, item_obj):
 		phone_data = eval(response.text)['value']
 		if 'span' in phone_data:
 			soup = bs(phone_data, 'lxml')
@@ -71,7 +71,7 @@ class SpSpider(scrapy.Spider):
 			for phone_number in soup.find_all('span'):
 				if phone_number.text != '000 000 000':
 					numbers.append(phone_number.text)
-			print(numbers)
+			item_obj['phone_number'] = numbers
 		else:
 			if phone_data != '000 000 000':
-				print(phone_data)
+				item_obj['phone_number'] = phone_data
