@@ -90,6 +90,10 @@ class SpSpider(scrapy.Spider):
 		except AttributeError:
 			item['date_time'] = None
 
+		try:
+			item['ad_number'] = response.xpath('//li[@class="offer-bottombar__item"]/strong/text()').get()
+		except AttributeError:
+			item['ad_number'] = None
 
 		yield item
 	
