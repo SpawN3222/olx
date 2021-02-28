@@ -15,9 +15,11 @@ NEWSPIDER_MODULE = 'olx.spiders'
 LOG_STDOUT = True
 LOG_LEVEL = 'INFO'
 
-FEED_EXPORT_FIELDS = ['user_name', 'user_url', 'phone_number', 'title', 'description', 'photo_urls', 'price', 'address']
+FEED_EXPORT_FIELDS = ['user_name', 'user_url', 'phone_number', 'title', 'description', 'photo_urls', 'price', 'address', 'date_time']
 FEED_FORMAT="json" # формат файла для вывода данных(json, csv, xml)
 FEED_URI="data.json" # путь для сохранения файла 
+
+FEED_EXPORT_ENCODING = 'utf-8'
 
 ######################################### Proxy ###############################################
 # Retry many times since proxies often fail

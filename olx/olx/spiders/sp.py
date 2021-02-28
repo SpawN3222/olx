@@ -35,6 +35,7 @@ class SpSpider(scrapy.Spider):
 		data = response.xpath('//ul[@id="contact_methods_below"]/li/@class').get()
 		uid = None
 		
+
 		try:
 			uid = data.strip('link-phone clr rel  atClickTracking contact-a activated')
 			uid  = eval(uid)['id']
@@ -44,25 +45,52 @@ class SpSpider(scrapy.Spider):
 			url = f'https://www.olx.ua/uk/ajax/misc/contact/phone/{uid}/?pt={token}'
 			yield scrapy.Request(url=url, callback=self.get_phone_numbers, cb_kwargs=dict(item_obj=item))
 
-		item['title'] = response.xpath('//div[@class="offer-titlebox"]/h1/text()').get().strip()
 
-		item['price'] = response.xpath('//strong[@class="pricelabel__value arranged"]/text()').get()
+		try:
+			item['title'] = response.xpath('//div[@class="offer-titlebox"]/h1/text()').get().strip()
+		except AttributeError:
+			item['title'] = None
 
-		item['description'] = response.xpath('//div[@class="clr lheight20 large"]/text()').get().strip()
+		try:
+			item['price'] = response.xpath('//strong[@class="pricelabel__value arranged"]/text()').get()
+		except AttributeError:
+			item['price'] = None
+
+		try:
+			item['description'] = response.xpath('//div[@class="clr lheight20 large"]/text()').get().strip()
+		except AttributeError:
+			item['description'] = None
         
-		photo_urls = []
-		for i in response.xpath('//ul[@id="descGallery"]/li'):
-			url = i.xpath('./a/@href').get()
-			photo_urls.append(url)
+		try:
+			photo_urls = []
+			for i in response.xpath('//ul[@id="descGallery"]/li'):
+				url = i.xpath('./a/@href').get()
+				photo_urls.append(url)
+			item['photo_urls'] = photo_urls
+		except AttributeError:
+			item['photo_urls'] = None
 
-		item['photo_urls'] = photo_urls
+		try:
+			item['user_name'] = response.xpath('//div[@class="offer-user__actions"]/h4/a/text()').get().strip()
+		except AttributeError:
+			item['user_name'] = None
 
-		item['user_name'] = response.xpath('//div[@class="offer-user__actions"]/h4/a/text()').get().strip()
+		try:
+			item['user_url'] = response.xpath('//div[@class="offer-user__actions"]/h4/a/@href').get()
+		except AttributeError:
+			item['user_url'] = None
 
-		item['user_url'] = response.xpath('//div[@class="offer-user__actions"]/h4/a/@href').get()
+		try:
+			item['address'] = response.xpath('//div[@class="offer-user__address"]/address/p/text()').get().strip()
+		except AttributeError:
+			item['address'] = None
 
-		item['address'] = response.xpath('//div[@class="offer-user__address"]/address/p/text()').get().strip()
-	
+		try:
+			item['date_time'] = response.xpath('//li[@class="offer-bottombar__item"]/em/strong/text()').get()
+		except AttributeError:
+			item['date_time'] = None
+
+
 		yield item
 	
 	def get_phone_numbers(self, response, item_obj):
