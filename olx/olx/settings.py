@@ -40,8 +40,8 @@ PROXY_MODE = 0
 #ROBOTSTXT_OBEY = True
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS = 5000
-CONCURRENT_REQUESTS_PER_IP = 10
+CONCURRENT_REQUESTS = 500
+CONCURRENT_REQUESTS_PER_IP = 1
 ##############################################################################################
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent

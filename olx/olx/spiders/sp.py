@@ -48,7 +48,7 @@ class SpSpider(scrapy.Spider):
 
 		item['price'] = response.xpath('//strong[@class="pricelabel__value arranged"]/text()').get()
 
-		item['description'] = response.xpath('//div[@class="clr lheight20 large"]/text()').get()
+		item['description'] = response.xpath('//div[@class="clr lheight20 large"]/text()').get().strip()
         
 		photo_urls = []
 		for i in response.xpath('//ul[@id="descGallery"]/li'):
@@ -57,11 +57,11 @@ class SpSpider(scrapy.Spider):
 
 		item['photo_urls'] = photo_urls
 
-		item['user_name'] = response.xpath('//div[@class="offer-user__actions"]/h4/a/text()').get()
+		item['user_name'] = response.xpath('//div[@class="offer-user__actions"]/h4/a/text()').get().strip()
 
 		item['user_url'] = response.xpath('//div[@class="offer-user__actions"]/h4/a/@href').get()
 
-		item['address'] = response.xpath('//div[@class="offer-user__address"]/address/p/text()').get()
+		item['address'] = response.xpath('//div[@class="offer-user__address"]/address/p/text()').get().strip()
 	
 		yield item
 	
@@ -73,9 +73,14 @@ class SpSpider(scrapy.Spider):
 			for phone_number in soup.find_all('span'):
 				if phone_number.text != '000 000 000':
 					numbers.append(phone_number.text)
+				else:
+					item_obj['phone_number'] = None
+				
 			item_obj['phone_number'] = numbers
 		else:
 			if phone_data != '000 000 000':
 				item_obj['phone_number'] = phone_data
+			else:
+				item_obj['phone_number'] = None
 
 		yield item_obj
