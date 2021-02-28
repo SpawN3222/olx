@@ -1,9 +1,23 @@
-from olx.items import OlxItem
+#from olx.items import OlxItem
 import scrapy
 
 from bs4 import BeautifulSoup as bs
 import json
 import re
+
+class OlxItem(scrapy.Item):
+    # define the fields for your item here like:
+    # name = scrapy.Field()
+
+    user_name = scrapy.Field()
+    user_url = scrapy.Field()
+    phone_number = scrapy.Field()
+
+    title = scrapy.Field()
+    description = scrapy.Field()
+    photo_urls = scrapy.Field()
+    price = scrapy.Field()
+    address = scrapy.Field()
 
 
 class SpSpider(scrapy.Spider):
