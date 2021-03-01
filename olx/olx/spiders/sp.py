@@ -1,4 +1,6 @@
 from olx.items import OlxItem
+from olx.utils import get_item_or_none
+
 import scrapy
 
 from bs4 import BeautifulSoup as bs
@@ -46,20 +48,10 @@ class SpSpider(scrapy.Spider):
 			yield scrapy.Request(url=url, callback=self.get_phone_numbers, cb_kwargs=dict(item_obj=item))
 
 
-		try:
-			item['title'] = response.xpath('//div[@class="offer-titlebox"]/h1/text()').get().strip()
-		except AttributeError:
-			item['title'] = None
+		item['title'] = get_item_or_none(response.xpath('//div[@class="offer-titlebox"]/h1/text()').get())
+		item['price'] = get_item_or_none(response.xpath('//strong[@class="pricelabel__value arranged"]/text()').get())
+		item['description'] = get_item_or_none(response.xpath('//div[@class="clr lheight20 large"]/text()').get())
 
-		try:
-			item['price'] = response.xpath('//strong[@class="pricelabel__value arranged"]/text()').get()
-		except AttributeError:
-			item['price'] = None
-
-		try:
-			item['description'] = response.xpath('//div[@class="clr lheight20 large"]/text()').get().strip()
-		except AttributeError:
-			item['description'] = None
         
 		try:
 			photo_urls = []
@@ -70,32 +62,13 @@ class SpSpider(scrapy.Spider):
 		except AttributeError:
 			item['photo_urls'] = None
 
+
 		item['ad_url'] = response.url
-
-		try:
-			item['user_name'] = response.xpath('//div[@class="offer-user__actions"]/h4/a/text()').get().strip()
-		except AttributeError:
-			item['user_name'] = None
-
-		try:
-			item['user_url'] = response.xpath('//div[@class="offer-user__actions"]/h4/a/@href').get()
-		except AttributeError:
-			item['user_url'] = None
-
-		try:
-			item['address'] = response.xpath('//div[@class="offer-user__address"]/address/p/text()').get().strip()
-		except AttributeError:
-			item['address'] = None
-			
-		try:
-			item['date_time'] = response.xpath('//li[@class="offer-bottombar__item"]/em/strong/text()').get().strip()[2:]
-		except AttributeError:
-			item['date_time'] = None
-
-		try:
-			item['ad_number'] = response.xpath('//li[@class="offer-bottombar__item"]/strong/text()').get()
-		except AttributeError:
-			item['ad_number'] = None
+		item['user_name'] = get_item_or_none(response.xpath('//div[@class="offer-user__actions"]/h4/a/text()').get())
+		item['user_url'] = get_item_or_none(response.xpath('//div[@class="offer-user__actions"]/h4/a/@href').get())
+		item['address'] = get_item_or_none(response.xpath('//div[@class="offer-user__address"]/address/p/text()').get())
+		item['date_time'] = get_item_or_none(response.xpath('//li[@class="offer-bottombar__item"]/em/strong/text()').get())[2:]
+		item['ad_number'] = get_item_or_none(response.xpath('//li[@class="offer-bottombar__item"]/strong/text()').get())
 
 		yield item
 	
