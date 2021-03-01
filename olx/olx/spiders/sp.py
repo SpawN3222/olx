@@ -32,12 +32,15 @@ class SpSpider(scrapy.Spider):
 
 	def get_item_data(self, response):
 		item = OlxItem()
+<<<<<<< Updated upstream
 
 		token = re.search("var phoneToken = '[a-zA-Z0-9]+", response.text).group(0)[18:]
 		data = response.xpath('//ul[@id="contact_methods_below"]/li/@class').get()
 		uid = None
 		
 
+=======
+>>>>>>> Stashed changes
 		try:
 			uid = data.strip('link-phone clr rel  atClickTracking contact-a activated')
 			uid  = eval(uid)['id']
@@ -74,6 +77,7 @@ class SpSpider(scrapy.Spider):
 	
 	def get_phone_numbers(self, response, item_obj):
 		phone_data = eval(response.text)['value']
+		print(phone_data)
 		if 'span' in phone_data:
 			soup = bs(phone_data, 'lxml')
 			numbers = []
