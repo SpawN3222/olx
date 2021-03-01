@@ -20,4 +20,5 @@ class OlxItem(scrapy.Item):
     price = scrapy.Field()
     address = scrapy.Field()
     date_time = scrapy.Field()
-
+    ad_number = scrapy.Field()
+    ad_url = scrapy.Field()

@@ -70,6 +70,8 @@ class SpSpider(scrapy.Spider):
 		except AttributeError:
 			item['photo_urls'] = None
 
+		item['ad_url'] = response.url
+
 		try:
 			item['user_name'] = response.xpath('//div[@class="offer-user__actions"]/h4/a/text()').get().strip()
 		except AttributeError:
@@ -84,12 +86,16 @@ class SpSpider(scrapy.Spider):
 			item['address'] = response.xpath('//div[@class="offer-user__address"]/address/p/text()').get().strip()
 		except AttributeError:
 			item['address'] = None
-
+			
 		try:
 			item['date_time'] = response.xpath('//li[@class="offer-bottombar__item"]/em/strong/text()').get().strip()[2:]
 		except AttributeError:
 			item['date_time'] = None
 
+		try:
+			item['ad_number'] = response.xpath('//li[@class="offer-bottombar__item"]/strong/text()').get()
+		except AttributeError:
+			item['ad_number'] = None
 
 		yield item
 	
