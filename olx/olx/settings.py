@@ -21,6 +21,17 @@ FEED_URI="data.json" # путь для сохранения файла
 
 FEED_EXPORT_ENCODING = 'utf-8'
 
+######################################### User Agent ##########################################
+
+'''
+DOWNLOADER_MIDDLEWARES = {
+    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+    'scrapy_user_agents.middlewares.RandomUserAgentMiddleware': 400,
+}
+'''
+#RANDOM_UA_PER_PROXY  = True
+USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36 OPR/74.0.3911.160'
+
 ######################################### Proxy ###############################################
 # Retry many times since proxies often fail
 RETRY_TIMES = 5
@@ -42,7 +53,7 @@ PROXY_MODE = 0
 #ROBOTSTXT_OBEY = True
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS = 500
+CONCURRENT_REQUESTS = 16
 CONCURRENT_REQUESTS_PER_IP = 1
 ##############################################################################################
 
