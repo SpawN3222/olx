@@ -32,16 +32,10 @@ class SpSpider(scrapy.Spider):
 
 	def get_item_data(self, response):
 		item = OlxItem()
-<<<<<<< Updated upstream
 
-		token = re.search("var phoneToken = '[a-zA-Z0-9]+", response.text).group(0)[18:]
-		data = response.xpath('//ul[@id="contact_methods_below"]/li/@class').get()
-		uid = None
-		
-
-=======
->>>>>>> Stashed changes
 		try:
+			token = re.search("var phoneToken = '[a-zA-Z0-9]+", response.text).group(0)[18:]
+			data = response.xpath('//ul[@id="contact_methods_below"]/li/@class').get()
 			uid = data.strip('link-phone clr rel  atClickTracking contact-a activated')
 			uid  = eval(uid)['id']
 		except:
@@ -50,12 +44,6 @@ class SpSpider(scrapy.Spider):
 			url = f'https://www.olx.ua/uk/ajax/misc/contact/phone/{uid}/?pt={token}'
 			yield scrapy.Request(url=url, callback=self.get_phone_numbers, cb_kwargs=dict(item_obj=item))
 
-
-		item['title'] = get_item_or_none(response.xpath('//div[@class="offer-titlebox"]/h1/text()').get())
-		item['price'] = get_item_or_none(response.xpath('//strong[@class="pricelabel__value arranged"]/text()').get())
-		item['description'] = get_item_or_none(response.xpath('//div[@class="clr lheight20 large"]/text()').get())
-
-        
 		try:
 			photo_urls = []
 			for i in response.xpath('//ul[@id="descGallery"]/li'):
@@ -64,11 +52,25 @@ class SpSpider(scrapy.Spider):
 			item['photo_urls'] = photo_urls
 		except AttributeError:
 			item['photo_urls'] = None
+		
+		price = get_item_or_none(response.xpath('//strong[@class="pricelabel__value arranged"]/text()').get())
+		if not price:
+			price = get_item_or_none(response.xpath('//div[@class="offer-titlebox__price"]/div/strong/text()').get())
+		item['price'] = price
 
+		user_name = get_item_or_none(response.xpath('//div[@class="offer-user__actions"]/h4/a/text()').get())
+		if not user_name:
+			user_name = get_item_or_none(response.xpath('//div[@class="offer-user__actions"]/h4/text()').get())
+		item['user_name'] = user_name
+
+		user_url = get_item_or_none(response.xpath('//div[@class="offer-user__actions"]/h4/a/@href').get())
+		if not user_url:
+			user_url = get_item_or_none(response.xpath('//ul[@id="contact_methods"]/li/a/@href').get())
+		item['user_url'] = user_url
 
 		item['ad_url'] = response.url
-		item['user_name'] = get_item_or_none(response.xpath('//div[@class="offer-user__actions"]/h4/a/text()').get())
-		item['user_url'] = get_item_or_none(response.xpath('//div[@class="offer-user__actions"]/h4/a/@href').get())
+		item['description'] = get_item_or_none(response.xpath('//div[@class="clr lheight20 large"]/text()').get())
+		item['title'] = get_item_or_none(response.xpath('//div[@class="offer-titlebox"]/h1/text()').get())
 		item['address'] = get_item_or_none(response.xpath('//div[@class="offer-user__address"]/address/p/text()').get())
 		item['date_time'] = get_item_or_none(response.xpath('//li[@class="offer-bottombar__item"]/em/strong/text()').get())[2:]
 		item['ad_number'] = get_item_or_none(response.xpath('//li[@class="offer-bottombar__item"]/strong/text()').get())
@@ -77,7 +79,6 @@ class SpSpider(scrapy.Spider):
 	
 	def get_phone_numbers(self, response, item_obj):
 		phone_data = eval(response.text)['value']
-		print(phone_data)
 		if 'span' in phone_data:
 			soup = bs(phone_data, 'lxml')
 			numbers = []
@@ -93,5 +94,5 @@ class SpSpider(scrapy.Spider):
 				item_obj['phone_number'] = phone_data
 			else:
 				item_obj['phone_number'] = None
-
+		
 		yield item_obj
